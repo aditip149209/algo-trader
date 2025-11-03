@@ -5,35 +5,54 @@ Get the trading simulator running in 5 minutes!
 ## Prerequisites
 
 **Ubuntu/Debian:**
+
 ```bash
 sudo apt-get update
 sudo apt-get install build-essential cmake libopenmpi-dev openmpi-bin
 ```
 
 **macOS:**
+
 ```bash
 brew install cmake open-mpi
 ```
 
+**Windows:**
+
+- Install Visual Studio 2019+ with C++ support, or MinGW-w64
+- Download and install Microsoft MPI (MS-MPI) from https://docs.microsoft.com/en-us/message-passing-interface/microsoft-mpi
+- Download and install CMake from https://cmake.org/download/
+- (Optional) Install Python 3.x for result visualization
+
 ## Build and Run
 
 ### 1. Clone/Navigate to Project
+
 ```bash
 cd trading-sim/
 ```
 
 ### 2. Build
+
 ```bash
 chmod +x scripts/*.sh
 ./scripts/build.sh
 ```
 
+**Windows:**
+
+```batch
+scripts\build.bat
+```
+
 ### 3. Run Tests
+
 ```bash
 ./scripts/build.sh --test
 ```
 
 ### 4. Run Simulation
+
 ```bash
 # Quick run with 4 exchanges
 mpirun -np 4 ./build/trading_sim
@@ -42,7 +61,18 @@ mpirun -np 4 ./build/trading_sim
 ./scripts/run_simulation.sh -np 4 -nt 8
 ```
 
+**Windows:**
+
+```batch
+REM Quick run with 4 exchanges
+mpiexec -n 4 build\Release\trading_sim.exe
+
+REM Or use the runner script
+scripts\run_simulation.bat -np 4 -nt 8
+```
+
 ### 5. Validate Everything
+
 ```bash
 ./scripts/validate_correctness.sh
 ```
@@ -70,18 +100,28 @@ Trades per Second: 4227.8
 ## Output Files
 
 After running, you'll get:
+
 - `trades_rank_X.csv` - All executed trades
 - `prices_rank_X.csv` - Price history for each instrument
 
 ## Visualize Results
 
 If you have Python installed:
+
 ```bash
 pip3 install matplotlib pandas
 python3 scripts/analyze_results.py .
 ```
 
+**Windows:**
+
+```batch
+pip install matplotlib pandas
+python scripts\analyze_results.py .
+```
+
 This generates:
+
 - `trade_prices.png` - Price chart
 - `price_history.png` - Price evolution
 - `trade_volume.png` - Volume distribution
@@ -91,17 +131,27 @@ This generates:
 ## Common Issues
 
 **Issue**: `mpirun: command not found`
+
 ```bash
 sudo apt-get install openmpi-bin
 ```
 
+**Issue**: `mpiexec: command not found` (Windows)
+
+```batch
+REM Ensure MS-MPI is installed and in PATH
+REM Download from: https://docs.microsoft.com/en-us/message-passing-interface/microsoft-mpi
+```
+
 **Issue**: Low performance
+
 ```bash
 # Rebuild in Release mode
 ./scripts/build.sh --clean
 ```
 
 **Issue**: Tests fail
+
 ```bash
 # Check your MPI installation
 mpirun --version
@@ -110,15 +160,18 @@ mpirun --version
 ## Next Steps
 
 1. **Modify parameters** in `src/main.cpp`:
+
    - `NUM_INSTRUMENTS` - More/fewer instruments
    - `NUM_AGENTS` - More/fewer traders
    - `SIMULATION_TICKS` - Longer/shorter simulation
 
 2. **Add new strategies** in `src/agent.cpp`:
+
    - Implement custom trading logic
    - Test different market behaviors
 
 3. **Run performance tests**:
+
    ```bash
    ./scripts/run_simulation.sh --scaling-test
    ```

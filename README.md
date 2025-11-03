@@ -5,6 +5,7 @@ A high-performance hybrid MPI+OpenMP parallel trading simulation system that dem
 ## 🎯 Project Overview
 
 This simulator models a multi-exchange trading environment where:
+
 - **MPI processes** represent separate exchange nodes
 - **OpenMP threads** represent concurrent trading agents
 - Orders are matched in real-time using order book mechanics
@@ -43,15 +44,18 @@ trading-sim/
 ## 🛠️ Prerequisites
 
 ### Required
+
 - **C++ Compiler**: GCC 7+ or Clang 6+ with C++17 support
 - **MPI**: OpenMPI 3.0+ or MPICH 3.2+
 - **OpenMP**: Usually included with modern GCC/Clang
 - **CMake**: 3.10 or higher
 
 ### Optional
+
 - **Python 3.x** with matplotlib, pandas (for result visualization)
 
 ### Installation (Ubuntu/Debian)
+
 ```bash
 sudo apt-get update
 sudo apt-get install build-essential cmake
@@ -61,6 +65,7 @@ pip3 install matplotlib pandas
 ```
 
 ### Installation (macOS with Homebrew)
+
 ```bash
 brew install cmake
 brew install open-mpi
@@ -68,16 +73,43 @@ brew install python3
 pip3 install matplotlib pandas
 ```
 
+### Installation (Windows)
+
+- **C++ Compiler**: Install Visual Studio 2019+ with C++ support, or MinGW-w64
+- **MPI**: Download and install Microsoft MPI (MS-MPI) from Microsoft website
+- **CMake**: Download and install CMake from cmake.org
+- **Python** (optional): Install Python 3.x and run `pip install matplotlib pandas`
+
 ## 🔨 Building the Project
 
 ### Quick Build
+
 ```bash
 mkdir build && cd build
 cmake ..
 make -j$(nproc)
 ```
 
+**Windows (Command Prompt):**
+
+```batch
+mkdir build
+cd build
+cmake ..
+cmake --build . --config Release
+```
+
+**Windows (PowerShell):**
+
+```powershell
+mkdir build
+cd build
+cmake ..
+cmake --build . --config Release
+```
+
 ### Detailed Build Steps
+
 ```bash
 # 1. Create build directory
 mkdir build
@@ -94,6 +126,7 @@ sudo make install
 ```
 
 ### Build Options
+
 ```bash
 # Debug build with symbols
 cmake -DCMAKE_BUILD_TYPE=Debug ..
@@ -108,6 +141,7 @@ make VERBOSE=1
 ## 🚀 Running the Simulator
 
 ### Basic Execution
+
 ```bash
 # Run with 4 MPI processes (4 exchanges)
 mpirun -np 4 ./trading_sim
@@ -119,12 +153,25 @@ mpirun -np 2 ./trading_sim
 mpirun -np 8 --hostfile hostfile ./trading_sim
 ```
 
+**Windows:**
+
+```batch
+REM Run with 4 MPI processes (4 exchanges)
+mpiexec -n 4 Release\trading_sim.exe
+
+REM Run with 2 processes
+mpiexec -n 2 Release\trading_sim.exe
+```
+
 ### Output Files
+
 The simulator generates CSV files for analysis:
+
 - `trades_rank_X.csv` - All executed trades for rank X
 - `prices_rank_X.csv` - Price history for all instruments at rank X
 
 ### Console Output Example
+
 ```
 === Algorithmic Trading Simulator ===
 MPI Processes (Exchanges): 4
@@ -146,6 +193,7 @@ Trades per Second: 4227.8
 ## ✅ Testing for Correctness
 
 ### Running the Test Suite
+
 ```bash
 # Build tests
 cd build
@@ -155,36 +203,53 @@ make test_trading_sim
 mpirun -np 2 ./test_trading_sim
 ```
 
+**Windows:**
+
+```batch
+REM Build tests
+cd build
+cmake --build . --config Release --target test_trading_sim
+
+REM Run tests with MPI
+mpiexec -n 2 Release\test_trading_sim.exe
+```
+
 ### Test Categories
 
 #### 1. **Order Management Tests**
+
 - Order creation and submission
 - Thread-safe concurrent submissions
 - Order queue integrity
 
 #### 2. **Matching Engine Tests**
+
 - Exact price matching
 - Partial fills
 - No-match scenarios (price gaps)
 - Priority-based matching
 
 #### 3. **Price Discovery Tests**
+
 - Price updates after trades
 - Historical average calculations
 - Multi-instrument price tracking
 
 #### 4. **Agent Strategy Tests**
+
 - Random walk behavior
 - Momentum strategy logic
 - Mean reversion strategy
 - Market maker dual-side orders
 
 #### 5. **Parallel Correctness Tests**
+
 - OpenMP thread safety
 - MPI communication correctness
 - Data race detection
 
 ### Expected Test Output
+
 ```
 === Trading Simulator Test Suite ===
 Running correctness tests...
@@ -213,6 +278,7 @@ Total:  12
 ## 🔍 Validation Strategies
 
 ### 1. **Functional Correctness**
+
 ```bash
 # Verify order matching logic
 mpirun -np 1 ./test_trading_sim
@@ -222,6 +288,7 @@ python3 scripts/validate_trades.py
 ```
 
 ### 2. **Concurrency Correctness**
+
 ```bash
 # Test with ThreadSanitizer
 cmake -DCMAKE_CXX_FLAGS="-fsanitize=thread" ..
@@ -233,6 +300,7 @@ mpirun -np 1 valgrind --tool=helgrind ./trading_sim
 ```
 
 ### 3. **Performance Consistency**
+
 ```bash
 # Run multiple times and compare results
 for i in {1..5}; do
@@ -241,6 +309,7 @@ done
 ```
 
 ### 4. **Scaling Tests**
+
 ```bash
 # Test with different thread counts
 export OMP_NUM_THREADS=2
@@ -259,6 +328,7 @@ done
 ## 📊 Analyzing Results
 
 ### Visualizing Trade Data
+
 ```python
 # scripts/analyze_results.py
 import pandas as pd
@@ -281,6 +351,7 @@ plt.savefig('trade_prices.png')
 ```
 
 ### Visualizing Price History
+
 ```python
 # Load price history
 prices = pd.read_csv('prices_rank_0.csv')
@@ -299,21 +370,25 @@ plt.savefig('price_history.png')
 ## 🎓 Key Concepts Demonstrated
 
 ### 1. **Hybrid Parallelism**
+
 - **Horizontal scaling**: MPI for distributed exchanges
 - **Vertical scaling**: OpenMP for concurrent agents
 - **Communication**: Inter-process price synchronization
 
 ### 2. **Concurrency Control**
+
 - **Mutex locks**: Protecting shared order queues
 - **Barriers**: Synchronizing simulation ticks
 - **Atomic operations**: Thread-safe counters
 
 ### 3. **Financial Algorithms**
+
 - **Order matching**: Price-time priority matching
 - **Price discovery**: Market-driven price updates
 - **Trading strategies**: Momentum, mean reversion, market making
 
 ### 4. **System Design**
+
 - **Modular architecture**: Separated concerns
 - **Scalability**: Linear scaling with threads/processes
 - **Observability**: Comprehensive logging and metrics
@@ -321,21 +396,25 @@ plt.savefig('price_history.png')
 ## 🧪 Robustness Features
 
 ### 1. **Error Handling**
+
 - MPI initialization checks
 - File I/O error handling
 - Invalid order validation
 
 ### 2. **Resource Management**
+
 - Proper MPI cleanup (MPI_Finalize)
 - Memory management with RAII
 - No memory leaks (verified with Valgrind)
 
 ### 3. **Deterministic Behavior**
+
 - Seeded random number generators
 - Reproducible simulations
 - Consistent order matching
 
 ### 4. **Edge Case Handling**
+
 - Zero-volume orders ignored
 - Price gaps handled correctly
 - Partial fills supported
@@ -343,6 +422,7 @@ plt.savefig('price_history.png')
 ## 📈 Performance Metrics
 
 ### Typical Results (Intel i7, 4 cores, 8 threads)
+
 ```
 Configuration: 4 MPI processes, 8 OpenMP threads each
 - Throughput: ~10,000 orders/second
@@ -352,6 +432,7 @@ Configuration: 4 MPI processes, 8 OpenMP threads each
 ```
 
 ### Benchmarking
+
 ```bash
 # Strong scaling test (fixed problem size)
 for np in 1 2 4 8; do
@@ -366,6 +447,7 @@ done
 ## 🐛 Debugging
 
 ### Enable Debug Output
+
 ```bash
 # Build in debug mode
 cmake -DCMAKE_BUILD_TYPE=Debug ..
@@ -378,17 +460,21 @@ mpirun -np 2 xterm -e gdb ./trading_sim
 ### Common Issues
 
 **Issue**: `MPI_Init failed`
+
 - **Solution**: Ensure MPI is properly installed: `which mpirun`
 
 **Issue**: Low performance
+
 - **Solution**: Build in Release mode: `cmake -DCMAKE_BUILD_TYPE=Release ..`
 
 **Issue**: Segmentation fault
+
 - **Solution**: Run with Valgrind: `mpirun -np 1 valgrind ./trading_sim`
 
 ## 📚 Further Extensions
 
 ### Suggested Improvements
+
 1. **Network Latency Simulation**: Add random delays to MPI communication
 2. **Order Book Visualization**: Real-time order book depth charts
 3. **Historical Data Replay**: Use real market data as input
